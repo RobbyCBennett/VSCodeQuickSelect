@@ -1,0 +1,44 @@
+{	
+	"name": "atomic-select",
+	"displayName": "Atomic Select",
+	"description": "Navigate and select words, quotes, and brackets.",
+	"version": "1.0.0",
+	"publisher": "rob-bennett",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/RobbyCBennett/VSCodeAtomicSelect.git"
+	},
+	"engines": {
+		"vscode": "^1.54.0"
+	},
+	"categories": [
+		"Debuggers",
+		"Keymaps",
+		"Other"
+	],
+	"keywords": [
+		"Select",
+		"Word",
+		"Navigate",
+		"Quote",
+		"Bracket"
+	],
+	"icon": "icon.png",
+	"activationEvents": [
+        "onCommand:atomicSelect.selectWord",
+        "onCommand:atomicSelect.selectAllWords"
+	],
+	"main": "./extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "atomicSelect.selectWord",
+				"title": "Atomic Select: Select Word"
+			},
+			{
+				"command": "atomicSelect.selectAllWords",
+				"title": "Atomic Select: Select All Words"
+			}
+		]
+	}
+}
