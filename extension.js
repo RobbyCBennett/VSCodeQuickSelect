@@ -1,6 +1,8 @@
 const vscode = require('vscode');
 
 // See example https://github.com/atom/atom/blob/master/src/selection.js
+// https://code.visualstudio.com/api/references/vscode-api#TextEditor
+// const {text} = activeEditor.document.lineAt(activeEditor.selection.active.line);
 
 //
 // Helper Functions
