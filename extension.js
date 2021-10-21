@@ -15,7 +15,42 @@ const vscode = require('vscode');
 //
 
 function selectWord() {
-	vscode.window.showInformationMessage('Select Word');
+	editor = vscode.window.activeTextEditor;
+	if (editor) {		
+		// document = editor.document;
+		// text = document.lineAt(editor.selection.active.line).text;
+		// position = document.positionAt(3);
+		// word = document.getWordRangeAtPosition(position)
+		// vscode.window.showInformationMessage('Select Word: ' + position);
+		// vscode.window.showInformationMessage('Select Word: ' + word);
+		// console.log(position);
+		// console.log(word);
+
+		wordRange = editor.document.getWordRangeAtPosition(editor.selection.active);
+
+		// new Selection(wordRange.start, wordRange.end);
+
+		// editor.edit((edit) => {
+		// 	editor.selection = new Selection(nextCursor, nextCursor);
+		// }, {
+		// 	undoStopAfter: false,
+		// 	undoStopBefore: false
+		// });
+
+		// editor.selection = new Selection(wordRange.start, wordRange.end);
+
+		start = wordRange.start;
+		startLine = start.line;
+		startCharacter = start.character;
+		end = wordRange.end;
+		endLine = end.line;
+		endCharacter = end.character;
+		// editor.selection = new Selection(new Position(startLine, startCharacter), newPosition(endLine, endCharacter));
+		// editor.selections = [new Selection(new Position(startLine, startCharacter), newPosition(endLine, endCharacter))];
+	}
+	else {
+		vscode.window.showInformationMessage('Select Word: no editor');
+	}
 }
 
 function selectAllWords() {

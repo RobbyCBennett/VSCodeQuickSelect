@@ -33,11 +33,13 @@
 		"commands": [
 			{
 				"command": "atomicSelect.selectWord",
-				"title": "Atomic Select: Select Word"
+				"title": "Atomic Select: Select Word",
+				"when": "editorTextFocus"
 			},
 			{
 				"command": "atomicSelect.selectAllWords",
-				"title": "Atomic Select: Select All Words"
+				"title": "Atomic Select: Select All Words",
+				"when": "editorTextFocus"
 			}
 		]
 	}
