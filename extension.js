@@ -40,11 +40,10 @@ function selectWord() {
 		// editor.selection = new Selection(wordRange.start, wordRange.end);
 
 		start = wordRange.start;
-		startLine = start.line;
-		startCharacter = start.character;
 		end = wordRange.end;
-		endLine = end.line;
-		endCharacter = end.character;
+
+		console.log('hi');
+		editor.selection = new Selection(start, end);
 		// editor.selection = new Selection(new Position(startLine, startCharacter), newPosition(endLine, endCharacter));
 		// editor.selections = [new Selection(new Position(startLine, startCharacter), newPosition(endLine, endCharacter))];
 	}
