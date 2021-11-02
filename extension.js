@@ -8,7 +8,17 @@ const vscode = require('vscode');
 // Helper Functions
 //
 
+function positionsEqual(pos1, pos2) {
+	return pos1.line == pos2.line && pos1.character == pos2.character;
+}
 
+function justCursor(sel) {
+	return positionsEqual(sel.start, sel.end);
+}
+
+function word(str) {
+	return true;
+}
 
 //
 // Extension Commands
@@ -16,36 +26,33 @@ const vscode = require('vscode');
 
 function selectWord() {
 	editor = vscode.window.activeTextEditor;
-	if (editor) {		
-		// document = editor.document;
-		// text = document.lineAt(editor.selection.active.line).text;
-		// position = document.positionAt(3);
-		// word = document.getWordRangeAtPosition(position)
-		// vscode.window.showInformationMessage('Select Word: ' + position);
-		// vscode.window.showInformationMessage('Select Word: ' + word);
-		// console.log(position);
-		// console.log(word);
+	if (editor) {
+		document = editor.document;
+		selections = editor.selections;
 
-		wordRange = editor.document.getWordRangeAtPosition(editor.selection.active);
+		// Compute the new selections
+		newSelections = [];
+		for (i = 0; i < selections.length; i++) {
+			selection = selections[i];
 
-		// new Selection(wordRange.start, wordRange.end);
+			// Select the current word
+			if (justCursor(selection)) {
+				wordRange = document.getWordRangeAtPosition(selection.active);
+				selection = new vscode.Selection(wordRange.start, wordRange.end);
+			}
 
-		// editor.edit((edit) => {
-		// 	editor.selection = new Selection(nextCursor, nextCursor);
-		// }, {
-		// 	undoStopAfter: false,
-		// 	undoStopBefore: false
-		// });
+			// Select the next instance of the selected word
+			// TODO: Add this functionality
+			else if (word(document.getText(selection))) {
+				vscode.window.showInformationMessage(document.getText(selection));
+			}
+			
+			newSelections.push(selection);
+		}
 
-		// editor.selection = new Selection(wordRange.start, wordRange.end);
+		// Replace the old selections with the new selections 
+		editor.selections = newSelections;
 
-		start = wordRange.start;
-		end = wordRange.end;
-
-		console.log('hi');
-		editor.selection = new Selection(start, end);
-		// editor.selection = new Selection(new Position(startLine, startCharacter), newPosition(endLine, endCharacter));
-		// editor.selections = [new Selection(new Position(startLine, startCharacter), newPosition(endLine, endCharacter))];
 	}
 	else {
 		vscode.window.showInformationMessage('Select Word: no editor');
