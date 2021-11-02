@@ -16,10 +16,6 @@ function justCursor(sel) {
 	return positionsEqual(sel.start, sel.end);
 }
 
-function word(str) {
-	return true;
-}
-
 //
 // Extension Commands
 //
@@ -43,8 +39,9 @@ function selectWord() {
 
 			// Select the next instance of the selected word
 			// TODO: Add this functionality
-			else if (word(document.getText(selection))) {
-				vscode.window.showInformationMessage(document.getText(selection));
+			else {
+				selectedText = document.getText(selection);
+				vscode.window.showInformationMessage('Need to find the next instance of: ' + selectedText);
 			}
 			
 			newSelections.push(selection);
