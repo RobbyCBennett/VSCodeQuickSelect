@@ -60,6 +60,22 @@ function selectAllWords() {
 	vscode.window.showInformationMessage('Select All Words');
 }
 
+function moveToStartOfWord() {
+	vscode.window.showInformationMessage('Move to start of word');
+}
+
+function selectToStartOfWord() {
+	vscode.window.showInformationMessage('Move to start of word');
+}
+
+function moveToEndOfWord() {
+	vscode.window.showInformationMessage('Move to end of word');
+}
+
+function selectToEndOfWord() {
+	vscode.window.showInformationMessage('Move to end of word');
+}
+
 //
 // Basic Extension Functions
 //
