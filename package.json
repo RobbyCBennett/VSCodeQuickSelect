@@ -25,7 +25,11 @@
 	"icon": "icon.png",
 	"activationEvents": [
         "onCommand:atomicSelect.selectWord",
-        "onCommand:atomicSelect.selectAllWords"
+        "onCommand:atomicSelect.selectAllWords",
+        "onCommand:atomicSelect.moveToStartOfWord",
+        "onCommand:atomicSelect.selectToStartOfWord",
+        "onCommand:atomicSelect.moveToEndOfWord",
+        "onCommand:atomicSelect.selectToEndOfWord"
 	],
 	"main": "./extension.js",
 	"contributes": {
@@ -38,6 +42,26 @@
 			{
 				"command": "atomicSelect.selectAllWords",
 				"title": "Atomic Select: Select All Words",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "atomicSelect.moveToStartOfWord",
+				"title": "Atomic Select: Move to Start of Word",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "atomicSelect.selectToStartOfWord",
+				"title": "Atomic Select: Select to Start of Word",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "atomicSelect.moveToEndOfWord",
+				"title": "Atomic Select: Move to End of Word",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "atomicSelect.selectToEndOfWord",
+				"title": "Atomic Select: Select to End of Word",
 				"when": "editorTextFocus"
 			}
 		]

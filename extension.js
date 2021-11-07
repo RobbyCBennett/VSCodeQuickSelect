@@ -31,7 +31,7 @@ function selectWord() {
 		for (i = 0; i < selections.length; i++) {
 			selection = selections[i];
 
-			// Select the current word
+			// New selection
 			if (justCursor(selection)) {
 				wordRange = document.getWordRangeAtPosition(selection.active);
 				selection = new vscode.Selection(wordRange.start, wordRange.end);
@@ -61,19 +61,107 @@ function selectAllWords() {
 }
 
 function moveToStartOfWord() {
-	vscode.window.showInformationMessage('Move to start of word');
+	editor = vscode.window.activeTextEditor;
+	if (editor) {
+		document = editor.document;
+		selections = editor.selections;
+
+		// Compute the new selections
+		newSelections = [];
+		for (i = 0; i < selections.length; i++) {
+			selection = selections[i];
+
+			// New selection
+			if (justCursor(selection)) {
+				wordRange = document.getWordRangeAtPosition(selection.active);
+				selection = new vscode.Selection(wordRange.start, wordRange.start);
+			}
+			
+			newSelections.push(selection);
+		}
+
+		// Replace the old selections with the new selections 
+		editor.selections = newSelections;
+
+	}
 }
 
 function selectToStartOfWord() {
-	vscode.window.showInformationMessage('Move to start of word');
+	editor = vscode.window.activeTextEditor;
+	if (editor) {
+		document = editor.document;
+		selections = editor.selections;
+
+		// Compute the new selections
+		newSelections = [];
+		for (i = 0; i < selections.length; i++) {
+			selection = selections[i];
+
+			// New selection
+			if (justCursor(selection)) {
+				wordRange = document.getWordRangeAtPosition(selection.active);
+				selection = new vscode.Selection(selection.active, wordRange.start);
+			}
+			
+			newSelections.push(selection);
+		}
+
+		// Replace the old selections with the new selections 
+		editor.selections = newSelections;
+
+	}
 }
 
 function moveToEndOfWord() {
-	vscode.window.showInformationMessage('Move to end of word');
+	editor = vscode.window.activeTextEditor;
+	if (editor) {
+		document = editor.document;
+		selections = editor.selections;
+
+		// Compute the new selections
+		newSelections = [];
+		for (i = 0; i < selections.length; i++) {
+			selection = selections[i];
+
+			// New selection
+			if (justCursor(selection)) {
+				wordRange = document.getWordRangeAtPosition(selection.active);
+				selection = new vscode.Selection(wordRange.end, wordRange.end);
+			}
+			
+			newSelections.push(selection);
+		}
+
+		// Replace the old selections with the new selections 
+		editor.selections = newSelections;
+
+	}
 }
 
 function selectToEndOfWord() {
-	vscode.window.showInformationMessage('Move to end of word');
+	editor = vscode.window.activeTextEditor;
+	if (editor) {
+		document = editor.document;
+		selections = editor.selections;
+
+		// Compute the new selections
+		newSelections = [];
+		for (i = 0; i < selections.length; i++) {
+			selection = selections[i];
+
+			// New selection
+			if (justCursor(selection)) {
+				wordRange = document.getWordRangeAtPosition(selection.active);
+				selection = new vscode.Selection(selection.active, wordRange.end);
+			}
+			
+			newSelections.push(selection);
+		}
+
+		// Replace the old selections with the new selections 
+		editor.selections = newSelections;
+
+	}
 }
 
 //
@@ -85,6 +173,10 @@ function activate(context) {
 	// activationEvents can have keyboard shortcuts, and commands show up in the command palette
 	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.selectWord', selectWord));
 	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.selectAllWords', selectAllWords));
+	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.moveToStartOfWord', moveToStartOfWord));
+	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.selectToStartOfWord', selectToStartOfWord));
+	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.moveToEndOfWord', moveToEndOfWord));
+	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.selectToEndOfWord', selectToEndOfWord));
 }
 
 function deactivate() {}
