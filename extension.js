@@ -27,12 +27,13 @@ function changeSelection(startWithWordRange, att1, att2) {
 			if (justCursor(selection)) {
 				wordRange = document.getWordRangeAtPosition(selection.active);
 
-				if (startWithWordRange) {
-					selection = new vscode.Selection(wordRange[att1], wordRange[att2]);
-				} else {
-					selection = new vscode.Selection(selection[att1], wordRange[att2]);
+				if (wordRange) {
+					if (startWithWordRange) {
+						selection = new vscode.Selection(wordRange[att1], wordRange[att2]);
+					} else {
+						selection = new vscode.Selection(selection[att1], wordRange[att2]);
+					}
 				}
-
 			}
 			
 			newSelections.push(selection);
