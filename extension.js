@@ -1,9 +1,5 @@
 const vscode = require('vscode');
 
-// See example https://github.com/atom/atom/blob/master/src/selection.js
-// https://code.visualstudio.com/api/references/vscode-api#TextEditor
-// const {text} = activeEditor.document.lineAt(activeEditor.selection.active.line);
-
 //
 // Helper Functions
 //
@@ -93,19 +89,23 @@ function selectAllWords() {
 }
 
 function moveToStartOfWord() {
+	// wordRange.start, wordRange.start
 	changeSelection(true, 'start', 'start');
 }
 
 function selectToStartOfWord() {
+	// selection.active, wordRange.start
 	changeSelection(false, 'active', 'start');
 }
 
 function moveToEndOfWord() {
+	// wordRange.end, wordRange.end
 	changeSelection(true, 'end', 'end');
 }
 
 function selectToEndOfWord() {
 	changeSelection(false, 'active', 'end');
+	// selection.active, wordRange.end
 }
 
 //
