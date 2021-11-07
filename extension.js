@@ -16,6 +16,38 @@ function justCursor(sel) {
 	return positionsEqual(sel.start, sel.end);
 }
 
+function changeSelection(startWithWordRange, att1, att2) {
+	editor = vscode.window.activeTextEditor;
+	if (editor) {
+		document = editor.document;
+		selections = editor.selections;
+
+		// Compute the new selections
+		newSelections = [];
+		for (i = 0; i < selections.length; i++) {
+			selection = selections[i];
+
+			// New selection
+			if (justCursor(selection)) {
+				wordRange = document.getWordRangeAtPosition(selection.active);
+
+				if (startWithWordRange) {
+					selection = new vscode.Selection(wordRange[att1], wordRange[att2]);
+				} else {
+					selection = new vscode.Selection(selection[att1], wordRange[att2]);
+				}
+
+			}
+			
+			newSelections.push(selection);
+		}
+
+		// Replace the old selections with the new selections 
+		editor.selections = newSelections;
+
+	}
+}
+
 //
 // Extension Commands
 //
@@ -61,107 +93,19 @@ function selectAllWords() {
 }
 
 function moveToStartOfWord() {
-	editor = vscode.window.activeTextEditor;
-	if (editor) {
-		document = editor.document;
-		selections = editor.selections;
-
-		// Compute the new selections
-		newSelections = [];
-		for (i = 0; i < selections.length; i++) {
-			selection = selections[i];
-
-			// New selection
-			if (justCursor(selection)) {
-				wordRange = document.getWordRangeAtPosition(selection.active);
-				selection = new vscode.Selection(wordRange.start, wordRange.start);
-			}
-			
-			newSelections.push(selection);
-		}
-
-		// Replace the old selections with the new selections 
-		editor.selections = newSelections;
-
-	}
+	changeSelection(true, 'start', 'start');
 }
 
 function selectToStartOfWord() {
-	editor = vscode.window.activeTextEditor;
-	if (editor) {
-		document = editor.document;
-		selections = editor.selections;
-
-		// Compute the new selections
-		newSelections = [];
-		for (i = 0; i < selections.length; i++) {
-			selection = selections[i];
-
-			// New selection
-			if (justCursor(selection)) {
-				wordRange = document.getWordRangeAtPosition(selection.active);
-				selection = new vscode.Selection(selection.active, wordRange.start);
-			}
-			
-			newSelections.push(selection);
-		}
-
-		// Replace the old selections with the new selections 
-		editor.selections = newSelections;
-
-	}
+	changeSelection(false, 'active', 'start');
 }
 
 function moveToEndOfWord() {
-	editor = vscode.window.activeTextEditor;
-	if (editor) {
-		document = editor.document;
-		selections = editor.selections;
-
-		// Compute the new selections
-		newSelections = [];
-		for (i = 0; i < selections.length; i++) {
-			selection = selections[i];
-
-			// New selection
-			if (justCursor(selection)) {
-				wordRange = document.getWordRangeAtPosition(selection.active);
-				selection = new vscode.Selection(wordRange.end, wordRange.end);
-			}
-			
-			newSelections.push(selection);
-		}
-
-		// Replace the old selections with the new selections 
-		editor.selections = newSelections;
-
-	}
+	changeSelection(true, 'end', 'end');
 }
 
 function selectToEndOfWord() {
-	editor = vscode.window.activeTextEditor;
-	if (editor) {
-		document = editor.document;
-		selections = editor.selections;
-
-		// Compute the new selections
-		newSelections = [];
-		for (i = 0; i < selections.length; i++) {
-			selection = selections[i];
-
-			// New selection
-			if (justCursor(selection)) {
-				wordRange = document.getWordRangeAtPosition(selection.active);
-				selection = new vscode.Selection(selection.active, wordRange.end);
-			}
-			
-			newSelections.push(selection);
-		}
-
-		// Replace the old selections with the new selections 
-		editor.selections = newSelections;
-
-	}
+	changeSelection(false, 'active', 'end');
 }
 
 //
