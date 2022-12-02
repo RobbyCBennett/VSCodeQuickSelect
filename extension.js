@@ -4,172 +4,174 @@ const vscode = require('vscode');
 // Helper Functions
 //
 
+const quote = /'|"|`/;
 
-// TODO: This should go to the end of the line when going up
-function previous(position) {
-	if (position.line > 0 && position.character == 0) {
-		return new vscode.Position(position.line - 1, position.character);
+function isQuote(text, i) {
+	// Not quote if character is wrong
+	if (!quote.test(text[i]))
+		return false;
+
+	// Not quote if escaped with \
+	if (i >= 2) {
+		if (text[i-1] == '\\' && text[i-2] != '\\')
+			return false;
 	}
-	else if (position.character > 0) {
-		return new vscode.Position(position.line, position.character - 1);
+	else if (i == 1) {
+		if (text[i-1] == '\\')
+			return false;
 	}
-	else {
-		return null;
-	}
+
+	return true;
 }
 
-function changeSelection(startWithWordRange, attribute1, attribute2) {
-	editor = vscode.window.activeTextEditor;
-	if (editor) {
-		document = editor.document;
-		selections = editor.selections;
+function changeCursor(start, end, select) {
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) return;
 
-		// Compute the new selections
-		newSelections = [];
-		for (i = 0; i < selections.length; i++) {
-			selection = selections[i];
+	const document = editor.document;
+	const selections = editor.selections;
+	const newSelections = [];
+	const text = document.getText();
+	const lastIndex = text.length - 1;
 
-			// New selection
-			if (selection.isEmpty) {
-				wordRange = document.getWordRangeAtPosition(selection.active);
+	// For each selection, expand out to the quotes
+	for (const selection of selections) {
+		// Travel left & right until quotes are found
+		let l = document.offsetAt(selection.start);
+		let r = document.offsetAt(selection.end) - 1;
+		let ls, ld, lb, rs, rd, rb; // First instance of single, double, backtick
+		let ln, rn = false; // New line seen
+		let lFinal, rFinal;
+		while (true) {
+			// Move left or right
+			let movedEither = false;
+			if (l > 0) {
+				l--;
+				movedEither = true;
+			}
+			if (r < lastIndex) {
+				r++;
+				movedEither = true;
+			}
+			if (! movedEither)
+				break;
 
-				if (wordRange) {
-					if (startWithWordRange) {
-						selection = new vscode.Selection(wordRange[attribute1], wordRange[attribute2]);
-					} else {
-						selection = new vscode.Selection(selection[attribute1], wordRange[attribute2]);
-					}
-				}
+			// Mark new lines seen
+			if (text[l] == '\n')
+				ln = true;
+			if (text[r] == '\n')
+				rn = true;
 
-				// Skip to the next/previous word
-				else {
-					position = selection.active;
-					while (! wordRange) {
-						position = position;
-						wordRange = document.getWordRangeAtPosition(position);
-					}
+			// Left new line or quote
+			if (text[l] == '\n')
+				ln = true;
+			else if (isQuote(text, l)) {
+				switch (text[l]) {
+					case "'":
+						if (ls == undefined && !ln)
+							ls = l;
+						break;
 
-					word = document.getText(wordRange);
-					vscode.window.showInformationMessage('Need to find the next instance of: ' + word);
+					case '"':
+						if (ld == undefined && !ln)
+							ld = l;
+						break;
+
+					case '`':
+						if (lb == undefined)
+							lb = l;
+						break;
 				}
 			}
-			
-			newSelections.push(selection);
+
+			// Right new line or quote
+			if (text[r] == '\n')
+				rn = true;
+			else if (isQuote(text, r)) {
+				switch (text[r]) {
+					case "'":
+						if (rs == undefined && !rn)
+							rs = r;
+						break;
+
+					case '"':
+						if (rd == undefined && !rn)
+							rd = r;
+						break;
+
+					case '`':
+						if (rb == undefined)
+							rb = r;
+						break;
+				}
+			}
+
+			// Stop if a pair of quotes are found
+			if (ls != undefined && rs != undefined) {
+				console.log(`SINGLE QUOTES: ${ls} ${rs}`);
+				lFinal = ls;
+				rFinal = rs;
+				break;
+			}
+			else if (ld != undefined && rd != undefined) {
+				console.log(`DOUBLE QUOTES: ${ld} ${rd}`);
+				lFinal = ld;
+				rFinal = rd;
+				break;
+			}
+			else if (lb != undefined && rb != undefined) {
+				console.log(`DOUBLE QUOTES: ${lb} ${rb}`);
+				lFinal = lb;
+				rFinal = rb;
+				break;
+			}
 		}
 
-		// Replace the old selections with the new selections 
-		editor.selections = newSelections;
-
+		// Make new selection
+		if (lFinal != undefined && rFinal != undefined)
+			newSelections.push(new vscode.Selection(document.positionAt(lFinal+1), document.positionAt(rFinal)));
 	}
+
+	editor.selections = newSelections;
 }
 
 //
 // Extension Commands
 //
 
-function selectWord() {
-	editor = vscode.window.activeTextEditor;
-	if (editor) {
-		document = editor.document;
-		selections = editor.selections;
-
-		// Compute the new selections
-		newSelections = [];
-		for (i = 0; i < selections.length; i++) {
-			selection = selections[i];
-
-			// New selection
-			if (selection.isEmpty) {
-				wordRange = document.getWordRangeAtPosition(selection.active);
-				selection = new vscode.Selection(wordRange.start, wordRange.end);
-			}
-
-			// Select the next instance of the selected word
-			// TODO: Add this functionality
-			// addSelectionToNextFindMatch
-			else {
-				selectedText = document.getText(selection);
-				vscode.window.showInformationMessage('Need to find the next instance of: ' + selectedText);
-			}
-			
-			newSelections.push(selection);
-		}
-
-		// Replace the old selections with the new selections 
-		editor.selections = newSelections;
-
-	}
-	else {
-		vscode.window.showInformationMessage('Select Word: no editor');
-	}
+function cursorQuoteSelect() {
+	const start  = true;
+	const end    = true;
+	const select = true;
+	changeCursor(start, end, select);
 }
 
-function selectAllWords() {
-	// selectHighlights
-	vscode.window.showInformationMessage('Select All Words');
+function cursorQuoteStart() {
+	const start  = true;
+	const end    = false;
+	const select = false;
+	changeCursor(start, end, select);
 }
 
-function moveToStartOfWord() {
-	// // wordRange.start, wordRange.start
-	// changeSelection(true, 'start', 'start');
-
-	editor = vscode.window.activeTextEditor;
-	if (editor) {
-		document = editor.document;
-		selections = editor.selections;
-
-		// Compute the new selections
-		newSelections = [];
-		for (i = 0; i < selections.length; i++) {
-			selection = selections[i];
-
-			// New selection
-			if (selection.isEmpty) {
-				wordRange = document.getWordRangeAtPosition(selection.active);
-
-				if (wordRange && ! selection.active.isEqual(wordRange.start)) {
-					selection = new vscode.Selection(wordRange.start, wordRange.start);
-				}
-
-				// Skip to the next/previous word
-				else {
-					wordRange = null;
-					position = selection.active;
-					while (position && ! wordRange) {
-						position = previous(position);
-						if (position) {
-							wordRange = document.getWordRangeAtPosition(position);
-						}
-					}
-					
-					if (wordRange && ! selection.active.isEqual(wordRange.start)) {
-						selection = new vscode.Selection(wordRange.start, wordRange.start);
-					}
-				}
-			}
-			
-			newSelections.push(selection);
-		}
-
-		// Replace the old selections with the new selections 
-		editor.selections = newSelections;
-
-	}
+function cursorQuoteStartSelect() {
+	const start  = true;
+	const end    = false;
+	const select = true;
+	changeCursor(start, end, select);
 }
 
-function selectToStartOfWord() {
-	// selection.active, wordRange.start
-	changeSelection(false, 'active', 'start');
+function cursorQuoteEnd() {
+	const start  = false;
+	const end    = true;
+	const select = false;
+	changeCursor(start, end, select);
 }
 
-function moveToEndOfWord() {
-	// wordRange.end, wordRange.end
-	changeSelection(true, 'end', 'end');
-}
-
-function selectToEndOfWord() {
-	changeSelection(false, 'active', 'end');
-	// selection.active, wordRange.end
+function cursorQuoteEndSelect() {
+	const start  = false;
+	const end    = true;
+	const select = true;
+	changeCursor(start, end, select);
 }
 
 //
@@ -179,12 +181,11 @@ function selectToEndOfWord() {
 function activate(context) {
 	// Implement activationEvents here, defined in package.json
 	// activationEvents can have keyboard shortcuts, and commands show up in the command palette
-	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.selectWord', selectWord));
-	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.selectAllWords', selectAllWords));
-	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.moveToStartOfWord', moveToStartOfWord));
-	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.selectToStartOfWord', selectToStartOfWord));
-	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.moveToEndOfWord', moveToEndOfWord));
-	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.selectToEndOfWord', selectToEndOfWord));
+	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.cursorQuoteSelect', cursorQuoteSelect));
+	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.cursorQuoteStart', cursorQuoteStart));
+	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.cursorQuoteStartSelect', cursorQuoteStartSelect));
+	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.cursorQuoteEnd', cursorQuoteEnd));
+	context.subscriptions.push(vscode.commands.registerCommand('atomicSelect.cursorQuoteEndSelect', cursorQuoteEndSelect));
 }
 
 function deactivate() {}

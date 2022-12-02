@@ -1,4 +1,4 @@
-{	
+{
 	"name": "atomic-select",
 	"displayName": "Atomic Select",
 	"description": "Navigate and select words, quotes, and brackets.",
@@ -24,44 +24,38 @@
 	],
 	"icon": "icon.png",
 	"activationEvents": [
-        "onCommand:atomicSelect.selectWord",
-        "onCommand:atomicSelect.selectAllWords",
-        "onCommand:atomicSelect.moveToStartOfWord",
-        "onCommand:atomicSelect.selectToStartOfWord",
-        "onCommand:atomicSelect.moveToEndOfWord",
-        "onCommand:atomicSelect.selectToEndOfWord"
+        "onCommand:atomicSelect.cursorQuoteSelect",
+        "onCommand:atomicSelect.cursorQuoteStart",
+        "onCommand:atomicSelect.cursorQuoteStartSelect",
+        "onCommand:atomicSelect.cursorQuoteEnd",
+        "onCommand:atomicSelect.cursorQuoteEndSelect"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "atomicSelect.selectWord",
-				"title": "Atomic Select: Select Word",
+				"command": "atomicSelect.cursorQuoteSelect",
+				"title": "Atomic Select: Cursor Quote Select",
 				"when": "editorTextFocus"
 			},
 			{
-				"command": "atomicSelect.selectAllWords",
-				"title": "Atomic Select: Select All Words",
+				"command": "atomicSelect.cursorQuoteStart",
+				"title": "Atomic Select: Cursor Quote Start",
 				"when": "editorTextFocus"
 			},
 			{
-				"command": "atomicSelect.moveToStartOfWord",
-				"title": "Atomic Select: Move to Start of Word",
+				"command": "atomicSelect.cursorQuoteStartSelect",
+				"title": "Atomic Select: Cursor Quote Start Select",
 				"when": "editorTextFocus"
 			},
 			{
-				"command": "atomicSelect.selectToStartOfWord",
-				"title": "Atomic Select: Select to Start of Word",
+				"command": "atomicSelect.cursorQuoteEnd",
+				"title": "Atomic Select: Cursor Quote End",
 				"when": "editorTextFocus"
 			},
 			{
-				"command": "atomicSelect.moveToEndOfWord",
-				"title": "Atomic Select: Move to End of Word",
-				"when": "editorTextFocus"
-			},
-			{
-				"command": "atomicSelect.selectToEndOfWord",
-				"title": "Atomic Select: Select to End of Word",
+				"command": "atomicSelect.cursorQuoteEndSelect",
+				"title": "Atomic Select: Cursor Quote End Select",
 				"when": "editorTextFocus"
 			}
 		]
