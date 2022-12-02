@@ -1,12 +1,12 @@
 {
-	"name": "atomic-select",
-	"displayName": "Atomic Select",
+	"name": "quick-select",
+	"displayName": "Quick Select",
 	"description": "Navigate and select words, quotes, and brackets.",
 	"version": "1.0.0",
 	"publisher": "rob-bennett",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/RobbyCBennett/VSCodeAtomicSelect.git"
+		"url": "https://github.com/RobbyCBennett/VSCodeQuickSelect.git"
 	},
 	"engines": {
 		"vscode": "^1.54.0"
@@ -24,38 +24,38 @@
 	],
 	"icon": "icon.png",
 	"activationEvents": [
-        "onCommand:atomicSelect.cursorQuoteSelect",
-        "onCommand:atomicSelect.cursorQuoteStart",
-        "onCommand:atomicSelect.cursorQuoteStartSelect",
-        "onCommand:atomicSelect.cursorQuoteEnd",
-        "onCommand:atomicSelect.cursorQuoteEndSelect"
+        "onCommand:quickSelect.cursorQuoteSelect",
+        "onCommand:quickSelect.cursorQuoteStart",
+        "onCommand:quickSelect.cursorQuoteStartSelect",
+        "onCommand:quickSelect.cursorQuoteEnd",
+        "onCommand:quickSelect.cursorQuoteEndSelect"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "atomicSelect.cursorQuoteSelect",
-				"title": "Atomic Select: Cursor Quote Select",
+				"command": "quickSelect.cursorQuoteSelect",
+				"title": "Quick Select: Cursor Quote Select",
 				"when": "editorTextFocus"
 			},
 			{
-				"command": "atomicSelect.cursorQuoteStart",
-				"title": "Atomic Select: Cursor Quote Start",
+				"command": "quickSelect.cursorQuoteStart",
+				"title": "Quick Select: Cursor Quote Start",
 				"when": "editorTextFocus"
 			},
 			{
-				"command": "atomicSelect.cursorQuoteStartSelect",
-				"title": "Atomic Select: Cursor Quote Start Select",
+				"command": "quickSelect.cursorQuoteStartSelect",
+				"title": "Quick Select: Cursor Quote Start Select",
 				"when": "editorTextFocus"
 			},
 			{
-				"command": "atomicSelect.cursorQuoteEnd",
-				"title": "Atomic Select: Cursor Quote End",
+				"command": "quickSelect.cursorQuoteEnd",
+				"title": "Quick Select: Cursor Quote End",
 				"when": "editorTextFocus"
 			},
 			{
-				"command": "atomicSelect.cursorQuoteEndSelect",
-				"title": "Atomic Select: Cursor Quote End Select",
+				"command": "quickSelect.cursorQuoteEndSelect",
+				"title": "Quick Select: Cursor Quote End Select",
 				"when": "editorTextFocus"
 			}
 		]
