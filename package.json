@@ -1,7 +1,7 @@
 {
 	"name": "quick-select",
 	"displayName": "Quick Select",
-	"description": "Navigate and select words, quotes, and brackets.",
+	"description": "Navigate and select strings",
 	"version": "1.0.0",
 	"publisher": "rob-bennett",
 	"repository": {
