@@ -4,11 +4,49 @@ const vscode = require('vscode');
 // Helper Functions
 //
 
-const quote = /'|"|`/;
+const quote = /['"]/;
+const quoteOrBacktick = /['"`]/;
 
-function isQuote(text, i) {
+function isTripleQuote(text, i, lastIndex=undefined) {
 	// Not quote if character is wrong
 	if (!quote.test(text[i]))
+		return false;
+
+	// Left
+	if (lastIndex == undefined) {
+		// Not quote if characters adjacent are missing
+		if (i < 2)
+			return false;
+
+		// Not quote if characters adjacent are different
+		if (text[i-1] != text[i] || text[i-2] != text[i])
+			return false;
+
+		// Not quote if escaped by \
+		if (i >= 3 && text[i-3] == '\\')
+			return false;
+	}
+	// Right
+	else {
+		// Not quote if characters adjacent are missing
+		if (i >= lastIndex - 2)
+			return false;
+
+		// Not quote if characters adjacent are different
+		if (text[i+1] != text[i] || text[i+2] != text[i])
+			return false;
+
+		// Not quote if escaped by \
+		if (i > 0 && text[i-1] == '\\')
+			return false;
+	}
+
+	return true;
+}
+
+function isQuoteOrBacktick(text, i) {
+	// Not quote if character is wrong
+	if (!quoteOrBacktick.test(text[i]))
 		return false;
 
 	// Not quote if escaped with \
@@ -36,12 +74,22 @@ function changeCursor(start, end, select) {
 
 	// For each selection, expand out to the quotes
 	for (const selection of selections) {
+		// First instance of single, double, backtick, triple single, and triple double
+		let lSingle, rSingle;
+		let lDouble, rDouble;
+		let lBacktick, rBacktick;
+		let lTripleSingle, rTripleSingle;
+		let lTripleDouble, rTripleDouble;
+
+		// Newline seen
+		let lNewline, rNewline = false;
+
+		// Final left & right positions if in a string
+		let lFinal, rFinal;
+
 		// Travel left & right until quotes are found
 		let l = document.offsetAt(selection.start);
 		let r = document.offsetAt(selection.end) - 1;
-		let ls, ld, lb, rs, rd, rb; // First instance of single, double, backtick
-		let ln, rn = false; // New line seen
-		let lFinal, rFinal;
 		while (true) {
 			// Move left or right
 			let movedEither = false;
@@ -56,73 +104,94 @@ function changeCursor(start, end, select) {
 			if (! movedEither)
 				break;
 
-			// Mark new lines seen
+			// Left newline, triple quote, or quote
 			if (text[l] == '\n')
-				ln = true;
-			if (text[r] == '\n')
-				rn = true;
-
-			// Left new line or quote
-			if (text[l] == '\n')
-				ln = true;
-			else if (isQuote(text, l)) {
+				lNewline = true;
+			else if (isTripleQuote(text, l)) {
 				switch (text[l]) {
 					case "'":
-						if (ls == undefined && !ln)
-							ls = l;
+						if (lTripleSingle == undefined)
+							lTripleSingle = l;
 						break;
-
 					case '"':
-						if (ld == undefined && !ln)
-							ld = l;
+						if (lTripleDouble == undefined)
+							lTripleDouble = l;
 						break;
-
+				}
+			}
+			else if (isQuoteOrBacktick(text, l)) {
+				switch (text[l]) {
+					case "'":
+						if (lSingle == undefined && !lNewline)
+							lSingle = l;
+						break;
+					case '"':
+						if (lDouble == undefined && !lNewline)
+							lDouble = l;
+						break;
 					case '`':
-						if (lb == undefined)
-							lb = l;
+						if (lBacktick == undefined)
+							lBacktick = l;
 						break;
 				}
 			}
 
-			// Right new line or quote
+			// Right newline, triple quote, or quote
 			if (text[r] == '\n')
-				rn = true;
-			else if (isQuote(text, r)) {
+				rNewline = true;
+			else if (isTripleQuote(text, r, lastIndex)) {
 				switch (text[r]) {
 					case "'":
-						if (rs == undefined && !rn)
-							rs = r;
+						if (rTripleSingle == undefined)
+							rTripleSingle = r;
 						break;
-
 					case '"':
-						if (rd == undefined && !rn)
-							rd = r;
+						if (rTripleDouble == undefined)
+							rTripleDouble = r;
 						break;
-
+				}
+			}
+			else if (isQuoteOrBacktick(text, r)) {
+				switch (text[r]) {
+					case "'":
+						if (rSingle == undefined && !rNewline)
+							rSingle = r;
+						break;
+					case '"':
+						if (rDouble == undefined && !rNewline)
+							rDouble = r;
+						break;
 					case '`':
-						if (rb == undefined)
-							rb = r;
+						if (rBacktick == undefined)
+							rBacktick = r;
 						break;
 				}
 			}
 
 			// Stop if a pair of quotes are found
-			if (ls != undefined && rs != undefined) {
-				console.log(`SINGLE QUOTES: ${ls} ${rs}`);
-				lFinal = ls;
-				rFinal = rs;
+			if (lSingle != undefined && rSingle != undefined) {
+				lFinal = lSingle;
+				rFinal = rSingle;
 				break;
 			}
-			else if (ld != undefined && rd != undefined) {
-				console.log(`DOUBLE QUOTES: ${ld} ${rd}`);
-				lFinal = ld;
-				rFinal = rd;
+			else if (lDouble != undefined && rDouble != undefined) {
+				lFinal = lDouble;
+				rFinal = rDouble;
 				break;
 			}
-			else if (lb != undefined && rb != undefined) {
-				console.log(`DOUBLE QUOTES: ${lb} ${rb}`);
-				lFinal = lb;
-				rFinal = rb;
+			else if (lBacktick != undefined && rBacktick != undefined) {
+				lFinal = lBacktick;
+				rFinal = rBacktick;
+				break;
+			}
+			else if (lTripleSingle != undefined && rTripleSingle != undefined) {
+				lFinal = lTripleSingle;
+				rFinal = rTripleSingle;
+				break;
+			}
+			else if (lTripleDouble != undefined && rTripleDouble != undefined) {
+				lFinal = lTripleDouble;
+				rFinal = rTripleDouble;
 				break;
 			}
 		}
