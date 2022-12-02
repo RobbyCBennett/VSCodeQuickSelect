@@ -196,9 +196,26 @@ function changeCursor(start, end, select) {
 			}
 		}
 
+		// If a quote wasn't found, end
+		if (lFinal == undefined || rFinal == undefined)
+			return;
+
+		// Keep the left inside of the string
+		lFinal += 1;
+		// Move left if start is true
+		lFinal = start ? document.positionAt(lFinal) : selection.start;
+		// Move right if end is true
+		rFinal = end ? document.positionAt(rFinal) : selection.end;
+		// If not selecting, move the middle position to the start/end
+		if (!select) {
+			if (start)
+				rFinal = lFinal;
+			else
+				lFinal = rFinal;
+		}
+
 		// Make new selection
-		if (lFinal != undefined && rFinal != undefined)
-			newSelections.push(new vscode.Selection(document.positionAt(lFinal+1), document.positionAt(rFinal)));
+		newSelections.push(new vscode.Selection(lFinal, rFinal));
 	}
 
 	editor.selections = newSelections;
