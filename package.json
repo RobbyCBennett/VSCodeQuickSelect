@@ -2,7 +2,7 @@
 	"name": "quick-select",
 	"displayName": "Quick Select",
 	"description": "Navigate and select strings",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"publisher": "rob-bennett",
 	"repository": {
 		"type": "git",
