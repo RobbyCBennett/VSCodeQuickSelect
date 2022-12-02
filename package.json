@@ -17,10 +17,10 @@
 	],
 	"keywords": [
 		"Select",
-		"Word",
-		"Navigate",
-		"Quote",
-		"Bracket"
+		"Move",
+		"Cursor",
+		"String",
+		"Quote"
 	],
 	"icon": "icon.png",
 	"activationEvents": [
