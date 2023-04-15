@@ -265,13 +265,14 @@ function cursorQuoteEndSelect() {
 //
 
 function activate(context) {
-	// Implement activationEvents here, defined in package.json
-	// activationEvents can have keyboard shortcuts, and commands show up in the command palette
-	context.subscriptions.push(vscode.commands.registerCommand('quickSelect.cursorQuoteSelect', cursorQuoteSelect));
-	context.subscriptions.push(vscode.commands.registerCommand('quickSelect.cursorQuoteStart', cursorQuoteStart));
-	context.subscriptions.push(vscode.commands.registerCommand('quickSelect.cursorQuoteStartSelect', cursorQuoteStartSelect));
-	context.subscriptions.push(vscode.commands.registerCommand('quickSelect.cursorQuoteEnd', cursorQuoteEnd));
-	context.subscriptions.push(vscode.commands.registerCommand('quickSelect.cursorQuoteEndSelect', cursorQuoteEndSelect));
+	// Commands
+	context.subscriptions.push(
+		vscode.commands.registerCommand('quickSelect.cursorQuoteSelect', cursorQuoteSelect),
+		vscode.commands.registerCommand('quickSelect.cursorQuoteStart', cursorQuoteStart),
+		vscode.commands.registerCommand('quickSelect.cursorQuoteStartSelect', cursorQuoteStartSelect),
+		vscode.commands.registerCommand('quickSelect.cursorQuoteEnd', cursorQuoteEnd),
+		vscode.commands.registerCommand('quickSelect.cursorQuoteEndSelect', cursorQuoteEndSelect),
+	);
 }
 
 function deactivate() {}
